@@ -36,13 +36,16 @@ Git & GitHub
 
 
 Install Dependencies
+
 pip install -r requirements.txt
 
 
 For Data Retrival 
+
 python data_retrieval.py 
 
 For Data Import to SQL 
+
 python data_import_sql.py 
 
 
@@ -55,4 +58,5 @@ python -m streamlit run dashboard/app.py
 Author
 
 Sudharsan Siva Surya
+
 Data Analyst / Software Developer
