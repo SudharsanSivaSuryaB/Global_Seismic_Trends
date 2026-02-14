@@ -16,7 +16,7 @@ engine = create_engine(mysql_url)
 
 # Write DataFrame to MySQL
 df.to_sql(name="earthquakes_data",con=engine,
-    if_exists="replace",   # change to 'append' if needed
+    if_exists="replace",  
     index=False
 )
 
