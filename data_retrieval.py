@@ -1,9 +1,9 @@
 import requests
 import pandas as pd
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed  # It is used for the improving the speed of retrieve data
 import time
-import re
+import re  # For using the regex this import is used 
 import numpy as np
 
 url = "https://earthquake.usgs.gov/fdsnws/event/1/query"
@@ -35,52 +35,41 @@ def fetch_month_data(year, month):
                     p = f["properties"]
                     g = f["geometry"]["coordinates"]
                     records.append({
-                        # "id": f.get("id"),
-                        # "time": pd.to_datetime(p.get("time"), unit='ms'),
-                        # "updated": pd.to_datetime(p.get("updated"), unit='ms'),
-                        # "latitude": g[1] if g else None,
-                        # "longitude": g[0] if g else None,
-                        # "depth_km": g[2] if g else None,
-                        # "mag": p.get("mag"),
+                     
 
-                        # 1–3
+                       
                         "id": f.get("id"),
                         "time": pd.to_datetime(p.get("time"), unit="ms"),
                         "updated": pd.to_datetime(p.get("updated"), unit="ms"),
 
-                        # 4–6
+                      
                         "latitude": g[1] if g else None,
                         "longitude": g[0] if g else None,
                         "depth_km": g[2] if g else None,
 
-                        # 7–10
+                        
                         "mag": p.get("mag"),
                         "magType": p.get("magType"),
                         "place": p.get("place"),
                         "status": p.get("status"),
 
-                        # 11–13
                         "tsunami": p.get("tsunami"),
                         "sig": p.get("sig"),
                         "net": p.get("net"),
 
-                        # 14–17
                         "nst": p.get("nst"),
                         "dmin": p.get("dmin"),
                         "rms": p.get("rms"),
                         "gap": p.get("gap"),
 
-                        # 18–20
                         "magError": p.get("magError"),
                         "depthError": p.get("depthError"),
                         "magNst": p.get("magNst"),
 
-                        # 21–23
                         "locationSource": p.get("locationSource"),
                         "magSource": p.get("magSource"),
                         "types": p.get("types"),
 
-                        # 24–26
                         "ids": p.get("ids"),
                         "sources": p.get("sources"),
                         "type": p.get("type")
@@ -116,16 +105,14 @@ df = pd.DataFrame(all_records)
 
 print("Initial rows:", df.shape[0])
 
-# -----------------
 # Text field cleaning
-# -----------------
 
 def extract_country(place):
     """Extract likely country or final token from place string."""
     if not place or not isinstance(place, str):
         return None
     # Common USGS format: "XX km SE of Place, Country"
-    m = re.search(r",\s*([^,]+)$", place)
+    m = re.search(r",\s*([^,]+)$", place)  # It is got from the use of AI Tools 
     if m:
         candidate = m.group(1).strip()
         # remove leading prepositions
@@ -160,9 +147,7 @@ if 'alert' in df.columns:
 if 'place' in df.columns:
     df['country'] = df['place'].apply(extract_country)
 
-# -----------------
 # Numeric field cleaning
-# -----------------
 numeric_fields = ['mag', 'depth_km', 'nst', 'dmin', 'rms', 'gap', 'magError', 'depthError', 'magNst', 'sig']
 for col in numeric_fields:
     if col in df.columns:
@@ -175,9 +160,7 @@ for col in numeric_fields:
         fill_value = 0 if np.isnan(med) else med
         df[col] = df[col].fillna(fill_value)
 
-# -----------------
 # Basic validity cleaning
-# -----------------
 # Drop duplicate ids
 if 'id' in df.columns:
     before = df.shape[0]
@@ -210,9 +193,7 @@ if 'time' in df.columns:
     df['day'] = df['time'].dt.day
     df['day_of_week'] = df['time'].dt.day_name()
 
-# -----------------
 # Derived flags
-# -----------------
 # Shallow/intermediate/deep classification
 if 'depth_km' in df.columns:
     def depth_category(d):
