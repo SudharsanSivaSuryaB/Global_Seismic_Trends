@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus # It is used for the password in the database connection 
 
 # Page config
 
