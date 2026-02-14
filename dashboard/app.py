@@ -3,26 +3,25 @@ import pandas as pd
 from sqlalchemy import create_engine
 from urllib.parse import quote_plus
 
-# ---------------------------------------------------
 # Page config
-# ---------------------------------------------------
+
 st.set_page_config(page_title="Earthquake Analysis", layout="wide")
 
-# ---------------------------------------------------
-# MYSQL CONNECTION
-# ---------------------------------------------------
+
+# MYSQL DATABASE CONNECTION
+
 host = "localhost"
 port = 3306
 database = "b115_b118"
 username = "root"
 password = quote_plus("12345")
 
-# Create MySQL connection string
+# MySQL connection string
 engine = create_engine(f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}")
 
-# ---------------------------------------------------
-# CSS (unchanged)
-# ---------------------------------------------------
+
+# CSS
+
 st.markdown(
     """
     <style>
@@ -40,15 +39,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ---------------------------------------------------
 # UI
-# ---------------------------------------------------
 st.title("🌍 Earthquake Data Analysis Dashboard")
 st.markdown("Select any problem statement to run the corresponding SQL query.")
 
-# ---------------------------------------------------
-# SQL QUERIES (MySQL syntax)
-# ---------------------------------------------------
+# SQL QUERIES FOR GETTING THE RESULTS FROM DATABASE
 queries = {
         "1. Top 10 strongest earthquakes (mag)": """
         SELECT *
@@ -82,7 +77,6 @@ queries = {
         GROUP BY magType
         """,
 
-        # -------------------- Time Analysis --------------------
         "6. Year with most earthquakes": """
         SELECT YEAR(time) AS year, COUNT(*) AS total_earthquakes
         FROM earthquakes_data
@@ -121,7 +115,6 @@ queries = {
         ORDER BY total_reports DESC
         """,
 
-        # -------------------- Casualties & Economic Loss --------------------
         "11. Top 5 places with highest casualties": """
         SELECT place,
         SUM(sig) AS total_significance
@@ -187,7 +180,6 @@ queries = {
 
         """,
 
-        # -------------------- Event Type & Quality Metrics --------------------
         "14. Reviewed vs automatic earthquakes (status)": """
         SELECT status, COUNT(*) AS total_events
         FROM earthquakes_data
@@ -244,7 +236,6 @@ queries = {
         WHERE nst > 100
         """,
 
-        # -------------------- Tsunamis & Alerts --------------------
         "19. Number of tsunamis triggered per year": """
         SELECT YEAR(time) AS year, COUNT(*) AS tsunami_events
         FROM earthquakes_data
@@ -278,7 +269,6 @@ queries = {
 
         """,
 
-        # -------------------- Seismic Pattern & Trends --------------------
         "21. Top 5 countries by highest avg magnitude (last 10 years)": """
         SELECT 
             country,
@@ -333,7 +323,6 @@ queries = {
         LIMIT 3
         """,
 
-        # -------------------- Depth, Location & Distance Analysis --------------------
         "25. Avg depth near equator (±5° latitude)": """
         SELECT 
             country,
@@ -416,9 +405,7 @@ queries = {
         """
 }
 
-# ---------------------------------------------------
-# Dropdown + Button (unchanged layout)
-# ---------------------------------------------------
+# Dropdown + Button 
 col1, _ = st.columns([4, 1])
 with col1:
     selected_task = st.selectbox(
@@ -431,9 +418,7 @@ with col1:
     with btn_left:
         run_button = st.button("Run Query", use_container_width=True)
 
-# ---------------------------------------------------
-# RUN QUERY
-# ---------------------------------------------------
+# RUN QUERY BUTTON
 if run_button:
     st.markdown(f"### Results for: {selected_task}")
 
